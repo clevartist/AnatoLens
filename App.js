@@ -1,61 +1,46 @@
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useRef, useState } from 'react';
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef, useState } from "react";
 
 export default function App() {
-  
   function Torus(props) {
-
     const [scaleValue, setScaleValue] = useState(false);
-    const [count, setCount] = useState(1);
-    const [direction, setDirection] = useState(1); // 1 increments; -1 decrements
-    const [elapsedTime, setElapsedTime] = useState(0);
+    const [targetScale, setTargetScale] = useState(0.7);
+    const [currentScale, setCurrentScale] = useState(0.7);
+    const [wire, setWire] = useState(false);
 
     const mesh = useRef();
-    const speed = 0.1;
+    const scaleSpeed = 0.03;
 
     useFrame((state, delta) => {
-      
-      if(scaleValue) {
-        setElapsedTime((prevTime) => prevTime + delta);
-        if(elapsedTime >= speed) {
-          setCount((prevCount) => {
-            if(prevCount >= 16) {
-              setDirection(-1);
-              return prevCount - 1;
-            } else if (prevCount <= 1) {
-              setDirection(1);
-              return prevCount + 1;
-            }
-            return prevCount + direction;
-          });
+      // Gradually adjust the scale towards the target scale
+      setCurrentScale((prevScale) => {
+        const newScale = prevScale + (targetScale - prevScale) * scaleSpeed;
+        return newScale;
+      });
 
-          setElapsedTime(0);
-        }
-      }
-      mesh.current.rotation.y += delta * count;
+      mesh.current.rotation.y += delta * 2; // Rotate the torus
+      mesh.current.scale.set(currentScale, currentScale, currentScale); // Update the scale on x, y, z
     });
 
+    const changeScale = () => {
+      setScaleValue(!scaleValue);
+      setTargetScale(scaleValue ? 0.7 : 1.4); // Toggle between 0.7 and 1 on click
+      setWire(!wire);
+    };
 
-    return(
-      <mesh 
-      {...props} 
-      ref={mesh}
-      scale={scaleValue ? 1 : 0.7} 
-      onClick={(e) => setScaleValue(!scaleValue)}
-      >
+    return (
+      <mesh {...props} ref={mesh} onClick={changeScale}>
         <torusGeometry />
-        <meshStandardMaterial color={"#cd965f"} />
+        <meshStandardMaterial wireframe={wire} color={"#cd965f"} />
       </mesh>
     );
   }
 
   return (
-    <Canvas>
+    <Canvas style={{ backgroundColor: "black" }}>
       <ambientLight />
-      <pointLight color='#fff' position={[10,10,10]} intensity={1000} />
-      <Torus position={[0,0,0]} />
-      <Torus position={[-0.5,-5,-5]} />
-      <Torus position={[1,2,1]} />
+      <pointLight color="#fff" position={[10, 10, 10]} intensity={1000} />
+      <Torus position={[0, 0, 0]} />
     </Canvas>
   );
 }
