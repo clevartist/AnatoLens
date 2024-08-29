@@ -1,10 +1,12 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState } from "react";
+import * as THREE from "three";
 
 export default function Donut({
   установитьЦель,
   setLookAtObject,
   lookAtObject,
+  setOffsetValue,
 }) {
   function Torus(props) {
     const [scaleValue, setScaleValue] = useState(false);
@@ -38,19 +40,30 @@ export default function Donut({
       <mesh {...props} ref={mesh} onClick={changeScale}>
         <torusGeometry />
         <meshStandardMaterial wireframe={wire} color={"#cd965f"} />
+        <Dot
+          position={[1, 1, 1]}
+          offsetValue={new THREE.Vector3(3, 3, 2)}
+          scalarValue={-2}
+        />
+        <Dot
+          position={[-1, -1, -1]}
+          offsetValue={new THREE.Vector3(-1, -2, -2)}
+          scalarValue={0}
+        />
       </mesh>
     );
   }
 
-  function Dot(props) {
+  function Dot({ position, offsetValue, scalarValue }) {
     const handleClick = (event) => {
       const currentPosition = event.object.position.clone();
       setLookAtObject(true);
-      установитьЦель(currentPosition.addScalar(1));
+      установитьЦель(currentPosition.addScalar(scalarValue));
+      setOffsetValue(offsetValue);
     };
 
     return (
-      <mesh {...props} scale={0.5} onClick={handleClick}>
+      <mesh position={position} scale={0.2} onClick={handleClick}>
         <sphereGeometry />
         <meshStandardMaterial color={"white"} />
       </mesh>
@@ -60,8 +73,6 @@ export default function Donut({
   return (
     <>
       <Torus position={[0, 0, 0]} />
-      <Dot position={[2, 1, -2]} />
-      <Dot position={[1, 3, 0]} />
     </>
   );
 }
