@@ -1,16 +1,19 @@
 import { View, StyleSheet, Pressable, Text } from "react-native";
 
-export default function HomeGUI({ resetCamera }) {
+export default function HomeGUI({ resetCamera, lookAtObject }) {
   return (
     <>
-      <View style={styles.guiReset}>
-        <Pressable
-          onPress={resetCamera}
-          style={{ backgroundColor: "white", padding: 10, borderRadius: 5 }}
-        >
-          <Text style={{ width: 90 }}>Reset camera</Text>
-        </Pressable>
-      </View>
+      {lookAtObject && (
+        <View style={styles.guiReset}>
+          <Pressable
+            onPress={resetCamera}
+            style={{ backgroundColor: "white", padding: 10, borderRadius: 5 }}
+          >
+            <Text style={{ width: 90 }}>Reset camera</Text>
+          </Pressable>
+        </View>
+      )}
+
       <View style={styles.guiTitle}>
         <Text style={styles.anatolens}>AnatoLens</Text>
       </View>
