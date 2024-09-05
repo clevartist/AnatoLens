@@ -21,7 +21,7 @@ export default function App() {
         return newScale;
       });
 
-      mesh.current.rotation.y += delta * 2; // Rotate the torus
+      mesh.current.rotation.y += delta / 1.5; // Rotate the torus
       mesh.current.scale.set(currentScale, currentScale, currentScale); // Update the scale on x, y, z
     });
 
