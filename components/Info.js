@@ -13,9 +13,12 @@ import {
 
 const { height: screenHeight } = Dimensions.get("window");
 
-export default function Info({ info }) {
+export default function Info({ info = { title: "", bigtext: "" } }) {
   const [readMore, setReadMore] = useState(false);
-  const barHeight = useRef(new Animated.Value(screenHeight / 2.5)).current;
+  const barHeight = useRef(
+    new Animated.Value(screenHeight - screenHeight)
+  ).current;
+  const [showMinimize, setShowMinimize] = useState(false);
 
   useEffect(() => {
     Animated.timing(barHeight, {
@@ -23,7 +26,24 @@ export default function Info({ info }) {
       duration: 500,
       useNativeDriver: false,
     }).start();
-  }, [readMore]);
+
+    if (!readMore) {
+      setShowMinimize(false);
+    }
+
+    console.log("showMinimize:", showMinimize);
+  }, [readMore, showMinimize]);
+
+  function handleScroll(event) {
+    //event.nativeEvent: Contains properties like contentOffset, contentSize and layoutMeasurement
+    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+
+    const toggler =
+      contentOffset.y >= 10 &&
+      contentOffset.y + layoutMeasurement.height <= contentSize.height - 80;
+
+    setShowMinimize(toggler);
+  }
 
   return (
     <View
@@ -33,29 +53,36 @@ export default function Info({ info }) {
       }}
     >
       <Animated.View style={[styles.container, { maxHeight: barHeight }]}>
-        <ScrollView
-          style={{ overflow: readMore ? "hidden" : "visible" }}
-          scrollEnabled={readMore ? true : false}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        >
-          <Text style={styles.title}>{info.title}</Text>
-          <Text style={styles.bigText}>{info.bigtext}</Text>
-        </ScrollView>
+        {info && (
+          <ScrollView
+            onScroll={handleScroll}
+            scrollEnabled={readMore ? true : false}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+          >
+            <Text style={styles.title}>{info.title}</Text>
+            <Text style={styles.bigText}>{info.bigtext}</Text>
+            <Pressable onPress={() => setReadMore(false)}>
+              <View>
+                <Image
+                  source={require("../assets/down.png")}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    transform: "rotateX(180deg)",
+                  }}
+                />
+              </View>
+            </Pressable>
+          </ScrollView>
+        )}
       </Animated.View>
       {!readMore && (
         <LinearGradient
           colors={["black", "transparent"]}
           start={{ x: 0.5, y: 0.7 }}
           end={{ x: 0.5, y: 0 }}
-          style={{
-            paddingTop: 30,
-            position: "absolute",
-            display: "flex",
-            bottom: -2,
-            alignSelf: "center",
-            width: "100%",
-          }}
+          style={styles.gradient}
         >
           <Pressable onPress={() => setReadMore(true)}>
             <View>
@@ -68,7 +95,7 @@ export default function Info({ info }) {
           </Pressable>
         </LinearGradient>
       )}
-      {readMore && (
+      {showMinimize && (
         <Pressable
           onPress={() => setReadMore(false)}
           style={{ position: "absolute", display: "flex", bottom: 0 }}
@@ -97,10 +124,23 @@ const styles = StyleSheet.create({
     right: 0,
     paddingLeft: 18,
     paddingRight: 18,
+    paddingTop: 18,
+    backgroundColor: "orange",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+  },
+  gradient: {
+    paddingTop: 30,
+    position: "absolute",
+    display: "flex",
+    bottom: -2,
+    alignSelf: "center",
+    width: "100%",
   },
   title: {
     color: "white",
     fontSize: 28,
+    fontFamily: "DESIGNER",
   },
   bigText: {
     color: "white",
