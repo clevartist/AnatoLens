@@ -7,6 +7,10 @@ import HomeGUI from "./components/HomeGUI";
 import Info from "./components/Info";
 import GlobalStyles from "./GlobalStyles";
 import bodyParts from "./components/InfoContent";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const cameraDefaultPosition = new THREE.Vector3(0, 0, 5);
@@ -16,6 +20,10 @@ export default function App() {
   const offsetRef = useRef(new THREE.Vector3());
   const [dedicatedID, setDedicatedID] = useState(0);
   const [info, setInfo] = useState(bodyParts);
+
+  const [loaded, error] = useFonts({
+    DESIGNER: require("./assets/fonts/DESIGNER.otf"),
+  });
 
   function CameraZoom({ цель }) {
     const { camera } = useThree();
@@ -32,21 +40,32 @@ export default function App() {
     return null;
   }
 
-  const resetCamera = () => {
+  function resetCamera() {
     установитьЦель(cameraDefaultPosition.clone());
     setLookAtObject(false);
-  };
+  }
 
   useEffect(() => {
     console.log("camera position:", offsetRef.current);
     console.log("camera target:", цель);
     console.log("lookAtObject:", lookAtObject);
-  }, [цель, lookAtObject, offsetRef]);
 
-  useEffect(() => {
-    const filtered = bodyParts.find((part) => part.id === dedicatedID);
-    setInfo(filtered);
-  }, [dedicatedID]);
+    if (lookAtObject) {
+      const filtered = bodyParts.find((part) => part.id === dedicatedID);
+      setInfo(filtered);
+    }
+    if (!lookAtObject) {
+      setInfo(null);
+    }
+
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [цель, lookAtObject, offsetRef, dedicatedID, loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#021024" }}>
