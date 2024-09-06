@@ -42,5 +42,6 @@ const styles = StyleSheet.create({
   anatolens: {
     color: "#052659",
     fontSize: 18,
+    fontFamily: "DESIGNER",
   },
 });
