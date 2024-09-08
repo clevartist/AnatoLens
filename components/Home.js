@@ -1,4 +1,4 @@
-import { View, SafeAreaView, StatusBar, Button } from "react-native";
+import { View, SafeAreaView, StatusBar } from "react-native";
 import { useFrame, useThree, Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import { useEffect, useRef, useState } from "react";
