@@ -10,10 +10,12 @@ import {
   Pressable,
   Image,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const { height: screenHeight } = Dimensions.get("window");
 
 export default function Info({ info = { title: "", bigtext: "" } }) {
+  const navigation = useNavigation();
   const [readMore, setReadMore] = useState(false);
   const barHeight = useRef(
     new Animated.Value(screenHeight - screenHeight)
@@ -54,27 +56,44 @@ export default function Info({ info = { title: "", bigtext: "" } }) {
     >
       <Animated.View style={[styles.container, { maxHeight: barHeight }]}>
         {info && (
-          <ScrollView
-            onScroll={handleScroll}
-            scrollEnabled={readMore ? true : false}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-          >
-            <Text style={styles.title}>{info.title}</Text>
-            <Text style={styles.bigText}>{info.bigtext}</Text>
-            <Pressable onPress={() => setReadMore(false)}>
-              <View>
-                <Image
-                  source={require("../assets/down.png")}
-                  style={{
-                    width: 44,
-                    height: 44,
-                    transform: "rotateX(180deg)",
-                  }}
-                />
+          <>
+            <Pressable
+              onPress={() =>
+                navigation.navigate({
+                  name: "BodyPart",
+                  params: { info: info },
+                  merge: true,
+                })
+              }
+            >
+              <View style={{ backgroundColor: "white", padding: 10 }}>
+                <Text style={{ fontSize: 18 }}>
+                  Page dedicated to {info.title}
+                </Text>
               </View>
             </Pressable>
-          </ScrollView>
+            <ScrollView
+              onScroll={handleScroll}
+              scrollEnabled={readMore ? true : false}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+            >
+              <Text style={styles.title}>{info.title}</Text>
+              <Text style={styles.bigText}>{info.bigtext}</Text>
+              <Pressable onPress={() => setReadMore(false)}>
+                <View>
+                  <Image
+                    source={require("../assets/down.png")}
+                    style={{
+                      width: 44,
+                      height: 44,
+                      transform: "rotateX(180deg)",
+                    }}
+                  />
+                </View>
+              </Pressable>
+            </ScrollView>
+          </>
         )}
       </Animated.View>
       {!readMore && (
