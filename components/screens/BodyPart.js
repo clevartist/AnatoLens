@@ -3,27 +3,46 @@ import { Canvas } from "@react-three/fiber";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GlobalStyles from "../../GlobalStyles";
 import bodyParts from "../InfoContent";
+import * as THREE from "expo-three";
 
 const geometryMenu = {
   coneGeometry: () => <coneGeometry />,
   boxGeometry: () => <boxGeometry />,
 };
 
-export default function BodyPart() {
+export default function BodyPart({
+  установитьЦель,
+  setLookAtObject,
+  setOffsetValue,
+  setDedicatedID,
+}) {
   const navigation = useNavigation();
   const route = useRoute();
-  let i = 0;
 
   const bodyPart = bodyParts.find((part) => part.id === route.params.info.id);
-  const dotsArray = Array(bodyPart.dots.length);
-  for (i = 0; i < bodyPart.dots.length; i++) {
-    dotsArray.push(bodyPart.dots[i]);
-  }
+  const dotsArray = [...bodyPart.dots];
 
   const DecidedGeometry = geometryMenu[route.params.info.geometry];
 
-  console.log("\n\nBODY PART:\n", bodyPart);
+  console.log("\n\nBODY PART:", bodyPart.id);
   console.log("dotsArray: ", dotsArray);
+
+  function Dot({ index }) {
+    const handleClick = (event) => {
+      const currentPosition = event.object.position.clone();
+      установитьЦель(currentPosition);
+      setLookAtObject(true);
+      setOffsetValue(new THREE.Vector3(route.params.info.offset_value));
+      setDedicatedID(route.params.info.id);
+    };
+
+    return (
+      <mesh position={index.position} scale={0.2} onClick={handleClick}>
+        <sphereGeometry />
+        <meshStandardMaterial color={"white"} />
+      </mesh>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#021024" }}>
@@ -47,12 +66,10 @@ export default function BodyPart() {
 
           <mesh position={[0, 0, 0]} scale={1}>
             {DecidedGeometry ? <DecidedGeometry /> : null}
-            <meshStandardMaterial color={"purple"} />
+            <meshStandardMaterial color={"purple"} wireframe={true} />
 
             {dotsArray.map((index) => (
-              <mesh key={index.dot_id} position={index.position} scale={0.2}>
-                <sphereGeometry />
-              </mesh>
+              <Dot key={index.dot_id} index={index} />
             ))}
           </mesh>
         </Canvas>

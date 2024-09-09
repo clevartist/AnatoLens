@@ -1,36 +1,49 @@
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Dimensions,
+  Animated,
+  Pressable,
+} from "react-native";
+import Menu from "./Menu";
 
-export default function HomeGUI({ resetCamera, lookAtObject }) {
+const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
+
+export default function HomeGUI({ showMenu, setShowMenu }) {
   return (
     <>
-      {lookAtObject && (
-        <View style={styles.guiReset}>
+      {showMenu && (
+        <View>
           <Pressable
-            onPress={resetCamera}
-            style={{ backgroundColor: "white", padding: 10, borderRadius: 5 }}
-          >
-            <Text>Reset camera</Text>
-          </Pressable>
+            style={{
+              position: "absolute",
+              backgroundColor: "black",
+              opacity: 0.7,
+              top: 0,
+              right: 0,
+              width: screenWidth,
+              height: screenHeight,
+            }}
+            onPress={() => setShowMenu(false)}
+          ></Pressable>
         </View>
       )}
 
-      {!lookAtObject && (
-        <View style={styles.guiTitle}>
-          <Text style={styles.anatolens}>AnatoLens</Text>
-        </View>
-      )}
+      <View style={{ backgroundColor: "blue", flex: 1 }}>
+        {showMenu && <Menu setShowMenu={setShowMenu} showMenu={showMenu} />}
+
+        {showMenu && (
+          <View style={styles.guiTitle}>
+            <Text style={styles.anatolens}>AnatoLens</Text>
+          </View>
+        )}
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  guiReset: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    width: 80,
-    zIndex: 10,
-  },
   guiTitle: {
     position: "absolute",
     bottom: 30,

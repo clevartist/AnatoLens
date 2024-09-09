@@ -14,12 +14,10 @@ import { useNavigation } from "@react-navigation/native";
 
 const { height: screenHeight } = Dimensions.get("window");
 
-export default function Info({ info = { title: "", bigtext: "" } }) {
+export default function Info({ info, lookAtObject, resetCamera }) {
   const navigation = useNavigation();
   const [readMore, setReadMore] = useState(false);
-  const barHeight = useRef(
-    new Animated.Value(screenHeight - screenHeight)
-  ).current;
+  const barHeight = useRef(new Animated.Value(0)).current;
   const [showMinimize, setShowMinimize] = useState(false);
 
   useEffect(() => {
@@ -50,8 +48,7 @@ export default function Info({ info = { title: "", bigtext: "" } }) {
   return (
     <View
       style={{
-        flex: 1,
-        position: "relative",
+        flex: 0.3,
       }}
     >
       <Animated.View style={[styles.container, { maxHeight: barHeight }]}>
@@ -96,6 +93,16 @@ export default function Info({ info = { title: "", bigtext: "" } }) {
           </>
         )}
       </Animated.View>
+      {lookAtObject && (
+        <View style={styles.guiReset}>
+          <Pressable
+            onPress={resetCamera}
+            style={{ backgroundColor: "white", padding: 10, borderRadius: 5 }}
+          >
+            <Text>Reset camera</Text>
+          </Pressable>
+        </View>
+      )}
       {!readMore && (
         <LinearGradient
           colors={["black", "transparent"]}
@@ -164,5 +171,12 @@ const styles = StyleSheet.create({
   bigText: {
     color: "white",
     fontSize: 18,
+  },
+  guiReset: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    width: 80,
+    zIndex: 10,
   },
 });
