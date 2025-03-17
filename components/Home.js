@@ -1,6 +1,13 @@
-import { View, SafeAreaView, StatusBar, Text, StyleSheet } from "react-native";
+import {
+  View,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  StyleSheet,
+  Animated,
+} from "react-native";
 import { Canvas } from "@react-three/fiber";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFonts } from "expo-font";
 import Donut from "./Donut";
 import HomeGUI from "./HomeGUI";
@@ -54,7 +61,9 @@ export default function Home({
     <View style={{ flex: 1, backgroundColor: "#021024" }}>
       <StatusBar color="white" backgroundColor={"#021024"} />
       <SafeAreaView style={GlobalStyles.androidSafeZone}>
-        <Header setShowMenu={setShowMenu} showMenu={showMenu} />
+        {!lookAtObject && (
+          <Header setShowMenu={setShowMenu} showMenu={showMenu} />
+        )}
         <View style={{ flexDirection: "row", flex: 1 }}>
           <Canvas style={{ flex: 1, backgroundColor: "#021024" }}>
             <ambientLight />

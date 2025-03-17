@@ -4,7 +4,7 @@ export default function Header({ setShowMenu, showMenu }) {
   return (
     <View style={styles.header}>
       <Pressable>
-        <Text style={styles.text}>Profile</Text>
+        <Text style={styles.text}>Flames</Text>
       </Pressable>
       <Pressable onPress={() => setShowMenu(!showMenu)}>
         <Text style={styles.text}>Menu</Text>

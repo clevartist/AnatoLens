@@ -5,17 +5,16 @@ import GlobalStyles from "../../GlobalStyles";
 import bodyParts from "../InfoContent";
 import * as THREE from "expo-three";
 
-const geometryMenu = {
-  coneGeometry: () => <coneGeometry />,
-  boxGeometry: () => <boxGeometry />,
-};
-
 export default function BodyPart({
   установитьЦель,
   setLookAtObject,
   setOffsetValue,
   setDedicatedID,
 }) {
+  const geometryMenu = {
+    coneGeometry: () => <coneGeometry />,
+    boxGeometry: () => <boxGeometry />,
+  };
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -32,8 +31,15 @@ export default function BodyPart({
       const currentPosition = event.object.position.clone();
       установитьЦель(currentPosition);
       setLookAtObject(true);
-      setOffsetValue(new THREE.Vector3(route.params.info.offset_value));
-      setDedicatedID(route.params.info.id);
+      setOffsetValue(new THREE.Vector3(index.offset_value));
+      setDedicatedID(index.dot_id);
+
+      console.log(цель, lookAtObject, offsetValue, dedicatedID);
+
+      установитьЦель(null);
+      setLookAtObject(false);
+      setOffsetValue(null);
+      setDedicatedID(null);
     };
 
     return (

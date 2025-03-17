@@ -30,8 +30,6 @@ export default function Info({ info, lookAtObject, resetCamera }) {
     if (!readMore) {
       setShowMinimize(false);
     }
-
-    console.log("showMinimize:", showMinimize);
   }, [readMore, showMinimize]);
 
   function handleScroll(event) {

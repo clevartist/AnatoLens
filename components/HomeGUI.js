@@ -7,26 +7,39 @@ import {
   Pressable,
 } from "react-native";
 import Menu from "./Menu";
+import { useEffect, useRef } from "react";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
 
 export default function HomeGUI({ showMenu, setShowMenu }) {
+  const opacityValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(opacityValue, {
+      toValue: showMenu ? 0.7 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [showMenu]);
+
   return (
     <>
       {showMenu && (
         <View>
-          <Pressable
+          <AnimatedPressable
             style={{
               position: "absolute",
               backgroundColor: "black",
-              opacity: 0.7,
+              opacity: opacityValue,
               top: 0,
               right: 0,
               width: screenWidth,
               height: screenHeight,
             }}
             onPress={() => setShowMenu(false)}
-          ></Pressable>
+          ></AnimatedPressable>
         </View>
       )}
 
